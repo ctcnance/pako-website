@@ -1,0 +1,74 @@
+---
+import { navigation, site } from "../data/site";
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="wordmark" href="/" aria-label={`${site.name} home`}>
+      <span class="wordmark__name">PAKO</span>
+      <span class="wordmark__descriptor">Analytics</span>
+    </a>
+    <button
+      class="menu-toggle"
+      type="button"
+      aria-controls="primary-navigation"
+      aria-expanded="false"
+      aria-label="Open navigation"
+    >
+      <span></span>
+      <span></span>
+    </button>
+    <nav
+      id="primary-navigation"
+      class="site-nav"
+      aria-label="Primary navigation"
+    >
+      {
+        navigation.map(({ label, href }) => (
+          <a class="site-nav__link" href={href}>
+            {label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<script>
+  const menuToggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+  const primaryNavigation = document.querySelector<HTMLElement>(
+    "#primary-navigation",
+  );
+
+  document.documentElement.classList.add("js-enabled");
+
+  const closeMenu = () => {
+    menuToggle?.setAttribute("aria-expanded", "false");
+    menuToggle?.setAttribute("aria-label", "Open navigation");
+    primaryNavigation?.classList.remove("is-open");
+  };
+
+  menuToggle?.addEventListener("click", () => {
+    const isExpanded = menuToggle.getAttribute("aria-expanded") === "true";
+    menuToggle.setAttribute("aria-expanded", String(!isExpanded));
+    menuToggle.setAttribute(
+      "aria-label",
+      isExpanded ? "Open navigation" : "Close navigation",
+    );
+    primaryNavigation?.classList.toggle("is-open", !isExpanded);
+  });
+
+  primaryNavigation?.addEventListener("click", (event) => {
+    if ((event.target as HTMLElement).closest("a")) closeMenu();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (
+      event.key === "Escape" &&
+      menuToggle?.getAttribute("aria-expanded") === "true"
+    ) {
+      closeMenu();
+      menuToggle.focus();
+    }
+  });
+</script>
